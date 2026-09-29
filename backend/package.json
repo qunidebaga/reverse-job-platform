@@ -1,0 +1,21 @@
+{
+  "name": "reverse-job-backend",
+  "version": "0.1.0",
+  "description": "反转求职平台后端 MVP：求职者发布作品，企业主动约谈（Express + node:sqlite，零编译依赖）",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/seed.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
