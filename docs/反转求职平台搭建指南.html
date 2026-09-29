@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反转求职平台 · 从零搭建指南</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f3d4e'/%3E%3Cpath d='M9 20l5-9 4 6 2.5-3.5L25 20z' fill='%2338e1c8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+:root{
+  --bg:#0b1a24; --bg2:#0f2431; --panel:#122a37; --panel2:#16323f;
+  --line:#1f4353; --ink:#e8f1f4; --muted:#8fb0bd; --dim:#5f8492;
+  --accent:#38e1c8; --accent2:#7ce8d8; --warn:#f2b95c; --danger:#ef6f6c;
+  --blue:#4aa8f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Noto Sans SC',system-ui,-apple-system,'Microsoft YaHei',sans-serif;
+  line-height:1.7; font-size:15px;
+}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* 顶部导航 */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(11,26,36,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex;align-items:center;gap:8px;height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:16px;margin-right:auto;white-space:nowrap}
+.brand svg{flex:none}
+.nav-links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-links a{padding:6px 12px;border-radius:8px;color:var(--muted);font-size:13.5px;white-space:nowrap}
+.nav-links a:hover{color:var(--ink);background:var(--panel)}
+
+/* Hero */
+header.hero{padding:72px 0 56px;border-bottom:1px solid var(--line);background:
+  radial-gradient(1200px 500px at 80% -10%, rgba(56,225,200,.12), transparent 60%)}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--accent2);border:1px solid var(--line);border-radius:99px;padding:4px 14px;margin-bottom:22px}
+h1{font-size:42px;line-height:1.2;font-weight:900;letter-spacing:-.5px;max-width:20em}
+h1 .hl{color:var(--accent)}
+.sub{color:var(--muted);font-size:17px;max-width:46em;margin-top:16px}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.pill{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--muted)}
+.pill b{color:var(--accent2);font-weight:700}
+
+/* 区块通用 */
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+.sec-head{margin-bottom:34px}
+.sec-no{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:2px;margin-bottom:8px}
+h2{font-size:28px;font-weight:900;letter-spacing:-.3px}
+.sec-head p{color:var(--muted);margin-top:10px;max-width:52em}
+h3{font-size:17px;font-weight:700;margin-bottom:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+
+/* 架构分层图 */
+.arch{margin-top:40px}
+.layer{border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;background:var(--panel)}
+.layer .lt{font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.layer.client .lt{color:var(--blue)}
+.layer.server .lt{color:var(--accent)}
+.layer .items{display:flex;flex-wrap:wrap;gap:10px}
+.item{flex:1;min-width:150px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted)}
+.item b{display:block;color:var(--ink);font-size:14px;margin-bottom:3px}
+.conn{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--dim);font-size:12.5px;margin:10px 0;flex-wrap:wrap}
+.conn .arr{color:var(--accent);font-weight:700}
+
+/* 该放哪：双栏对照 */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col{border-radius:14px;padding:20px 22px}
+.col.server{background:var(--panel);border:1px solid rgba(56,225,200,.35)}
+.col.front{background:var(--panel);border:1px solid rgba(74,168,240,.35)}
+.col h3{display:flex;align-items:center;gap:8px}
+.col ul{list-style:none;margin-top:12px}
+.col li{padding:9px 0 9px 22px;position:relative;font-size:14px;color:var(--muted);border-bottom:1px dashed var(--line)}
+.col li:last-child{border-bottom:none}
+.col li::before{content:'';position:absolute;left:0;top:17px;width:8px;height:8px;border-radius:2px}
+.col.server li::before{background:var(--accent)}
+.col.front li::before{background:var(--blue)}
+.col li b{color:var(--ink);font-weight:600}
+.rule{margin-top:14px;font-size:13.5px;color:var(--dim);border-left:3px solid var(--warn);padding-left:12px}
+
+/* 步骤卡片 */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.step .num{font-size:12px;color:var(--accent);font-weight:900;letter-spacing:1px}
+.step h3{margin:6px 0 8px}
+.step p{font-size:13.5px;color:var(--muted)}
+.step code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;color:var(--accent2);font-family:Consolas,'Courier New',monospace}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13.5px;background:var(--panel);border-radius:10px;overflow:hidden}
+th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent2);font-weight:700;white-space:nowrap}
+td{color:var(--muted)}
+td code,th code{color:var(--accent);font-family:Consolas,'Courier New',monospace;font-size:12.5px}
+td b{color:var(--ink)}
+
+/* 安全清单 */
+.check li{position:relative;padding-left:30px;list-style:none;margin-bottom:10px;font-size:14px;color:var(--muted)}
+.check li::before{content:'';position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:6px;border:2px solid var(--accent);background:rgba(56,225,200,.12)}
+.check li b{color:var(--ink)}
+
+/* 时间轴 */
+.timeline{position:relative;display:grid;margin-top:8px}
+.timeline::before{content:'';position:absolute;top:2px;bottom:8px;left:151px;width:2px;background:var(--line)}
+.tl-item{display:grid;grid-column:1/-1;grid-template-columns:120px 32px 1fr;column-gap:16px;align-items:start}
+.tl-item .time{padding:14px 0;font-size:13px;font-weight:700;color:var(--accent2);text-align:right}
+.tl-item .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);justify-self:center;margin-top:19px}
+.tl-item .body{padding:12px 0 26px;font-size:14px;color:var(--muted)}
+.tl-item .body b{color:var(--ink);font-size:15px}
+
+/* CTA */
+footer{padding:56px 0 72px;text-align:center}
+footer h2{font-size:26px;margin-bottom:10px}
+footer p{color:var(--muted);max-width:40em;margin:0 auto 26px}
+.btn{display:inline-block;background:var(--accent);color:#07232b;font-weight:900;padding:12px 26px;border-radius:10px;font-size:15px}
+.btn:hover{background:var(--accent2)}
+
+@media (max-width:820px){
+  h1{font-size:30px}
+  .split,.steps{grid-template-columns:1fr}
+  .timeline{grid-template-columns:88px 26px 1fr;column-gap:10px}
+  .timeline::before{left:111px}
+  .tl-item{grid-template-columns:88px 26px 1fr;column-gap:10px}
+  .nav-links a{padding:6px 8px;font-size:12.5px}
+}
+@media (max-width:480px){
+  section{padding:48px 0}
+  h2{font-size:23px}
+  .brand span{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 视图：导航 ===== -->
+<nav>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0f3d4e"/><path d="M9 20l5-9 4 6 2.5-3.5L25 20z" fill="#38e1c8"/></svg>
+      <span>反转求职平台 · 搭建指南</span>
+    </div>
+    <div class="nav-links">
+      <a href="#arch">架构</a>
+      <a href="#where">放哪里</a>
+      <a href="#auth">登录</a>
+      <a href="#data">数据</a>
+      <a href="#invite">约谈</a>
+      <a href="#deploy">上线</a>
+      <a href="#security">安全</a>
+      <a href="#roadmap">路线图</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== 视图：Hero ===== -->
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">求职者发作品，企业主动来挑 —— 与传统求职相反</span>
+    <h1>把"反转求职平台"<span class="hl">建起来</span>，<br>先搞清楚哪些代码放哪台机器。</h1>
+    <p class="sub">这份指南回答三件事：<b style="color:var(--ink)">什么该放到服务器</b>、<b style="color:var(--ink)">什么留在前端</b>、<b style="color:var(--ink)">每一步怎么做</b>。照着做，你能从零把它跑起来并上线。</p>
+    <div class="meta">
+      <span class="pill">后端已就绪：<b>Express + SQLite + JWT</b></span>
+      <span class="pill">9 个接口实测通过</span>
+      <span class="pill">目标上线：<b>微信小程序</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 视图：架构 ===== -->
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">01</div>
+      <h2>一张图看懂：谁在哪个机器上跑</h2>
+      <p>整个平台只有两类"电脑"：用户的手机/浏览器（前端）和你的服务器（后端）。任何功能，先问一句"它该在哪儿跑"，答案基本决定了架构。</p>
+    </div>
+    <div class="arch">
+      <div class="layer client">
+        <div class="lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4aa8f0" stroke-width="2"><rect x="2" y="4" width="20" height="12" rx="2"/><path d="M8 20h8"/></svg>前端（客户端）· 用户设备上</div>
+        <div class="items">
+          <div class="item"><b>页面与界面</b>页面渲染、按钮点击、输入框、作品卡片展示</div>
+          <div class="item"><b>交互逻辑</b>表单校验、弹窗、翻页、筛选操作、预览动画</div>
+          <div class="item"><b>本地暂存</b>登录 token 存 storage、草稿、浏览记录</div>
+        </div>
+      </div>
+      <div class="conn"><span class="arr">▲ ▼</span><span>唯一的通道：HTTPS + JSON 接口（API）</span><span class="arr">▲ ▼</span></div>
+      <div class="layer server">
+        <div class="lt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38e1c8" stroke-width="2"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg>后端（服务器端）· 你控制的机器上</div>
+        <div class="items">
+          <div class="item"><b>账号与密码</b>注册、登录、Token 签发与校验 —— 绝不能放前端</div>
+          <div class="item"><b>所有数据</b>用户资料、作品、约谈记录（数据库）</div>
+          <div class="item"><b>业务规则</b>"只有企业能发起约谈""同一作品不可重复约谈"这类判断</div>
+          <div class="item"><b>文件存储</b>作品图、过程图、视频（对象存储）</div>
+        </div>
+      </div>
+    </div>
+    <div class="rule">一句话判据：<b style="color:var(--warn)">会泄露隐私、会被篡改、别人能伪造的东西，一律放服务器。</b>前端只负责"给人看、听人点"。</div>
+  </div>
+</section>
+
+<!-- ===== 视图：该放哪 ===== -->
+<section id="where">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">02</div>
+      <h2>具体到每一项：放服务器，还是放前端？</h2>
+      <p>把平台拆成具体功能，逐个对号入座。拿不准时回到 01 的一句话判据。</p>
+    </div>
+    <div class="split">
+      <div class="col server">
+        <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38e1c8" stroke-width="2"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/></svg>必须放服务器</h3>
+        <ul>
+          <li><b>账号密码 / openid / session_key</b>—— 密码只存加密哈希，密钥永不下发</li>
+          <li><b>Token 签发与校验</b>—— 登录凭证由服务器生成、由服务器验证</li>
+          <li><b>用户资料、作品、约谈记录</b>—— 数据库的全部读写</li>
+          <li><b>角色权限判断</b>—— "求职者能不能发作品""企业才能约谈"</li>
+          <li><b>约谈状态机</b>—— pending → accepted / rejected / cancelled</li>
+          <li><b>图片 / 视频存储</b>—— 用云存储，返回 fileID / URL</li>
+          <li><b>防暴力破解</b>—— 登录限流（错 5 次锁 15 分钟）</li>
+        </ul>
+        <div class="rule">这些任何一条放前端 = 用户能直接改自己角色、看别人密码、伪造约谈。这是平台翻车的头号原因。</div>
+      </div>
+      <div class="col front">
+        <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4aa8f0" stroke-width="2"><rect x="2" y="4" width="20" height="12" rx="2"/><path d="M8 20h8"/></svg>放心放前端</h3>
+        <ul>
+          <li><b>页面布局、配色、动效</b>—— 展示层</li>
+          <li><b>表单校验</b>—— 必填、格式（真正校验仍以服务器为准）</li>
+          <li><b>作品卡片排版、筛选交互</b>—— 调接口拿数据后渲染</li>
+          <li><b>登录 token 的本地保存</b>—— storage 存 token，但校验永远在服务器</li>
+          <li><b>预览与动画</b>—— 3D 模型预览、约谈动画（PlayCanvas 等）</li>
+          <li><b>接口请求封装</b>—— 统一带 Authorization 头的请求工具</li>
+        </ul>
+        <div class="rule">前端只是"遥控器"：按键发指令，真正的执行与数据都在服务器。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：登录 ===== -->
+<section id="auth">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">03</div>
+      <h2>登录系统怎么做（最重要的一步）</h2>
+      <p>推荐"微信一键登录为主 + 账号密码兜底"。原理：微信帮你验证"这是不是本人"，服务器只认 openid。</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="num">STEP 1</div><h3>小程序端拿临时凭证</h3><p>用户点"微信登录"→ 调 <code>wx.login()</code> 拿到一次性 <code>code</code>（5 分钟有效）。前端绝不知道用户身份，只是转交 code。</p></div>
+      <div class="step"><div class="num">STEP 2</div><h3>服务器换 openid</h3><p>后端拿 <code>code + appid + secret</code> 调微信 <code>code2session</code> 接口，换回 <code>openid</code>（用户唯一身份）和 <code>session_key</code>。secret 与 session_key 都只留在服务器。</p></div>
+      <div class="step"><div class="num">STEP 3</div><h3>查库或自动注册</h3><p>按 openid 查用户：<code>有 → 直接登录</code>；<code>没有 → 自动建号</code>，角色等用户完善资料时再选（求职者 / 企业）。</p></div>
+      <div class="step"><div class="num">STEP 4</div><h3>签发两层 Token</h3><p>返回 <code>access_token</code>（2 小时，每次请求带）和 <code>refresh_token</code>（30 天，只用于换新）。前端存 storage，拦截器自动续期。</p></div>
+    </div>
+    <table>
+      <colgroup><col style="width:24%"><col style="width:40%"><col style="width:36%"></colgroup>
+      <tr><th>环节</th><th>做法</th><th>为什么</th></tr>
+      <tr><td>密码（若有）</td><td>bcrypt 加盐哈希，cost ≥ 10</td><td>数据库泄露也还原不出明文</td></tr>
+      <tr><td>登录限流</td><td>同 IP / 账号 15 分钟错 5 次锁 15 分钟</td><td>防暴力破解</td></tr>
+      <tr><td>密钥</td><td><code>JWT_SECRET</code> 生产用强随机值</td><td>默认值被猜到 = 全线失守</td></tr>
+      <tr><td>退出登录</td><td>refresh_token 服务端标记失效</td><td>被盗后可撤销</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 视图：数据 ===== -->
+<section id="data">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">04</div>
+      <h2>数据怎么做：三张表就够 MVP</h2>
+      <p>所有数据都存在服务器数据库。第一版只需要三张表，字段就按下面来，够用且不臃肿。</p>
+    </div>
+    <table>
+      <colgroup><col style="width:14%"><col style="width:46%"><col style="width:40%"></colgroup>
+      <tr><th>表</th><th>核心字段</th><th>说明</th></tr>
+      <tr><td><code>users</code></td><td><b>role</b>（jobseeker / company）、username、password_hash、nickname、bio、location、tags、education、expectation</td><td>求职者与企业共用一张表，用 role 区分；tags 存 JSON 数组</td></tr>
+      <tr><td><code>works</code></td><td><b>user_id</b>、title、description、category（3d / ui / miniapp / video）、tags、cover、media、process、status</td><td>作品卡片；process 存过程图/源文件截图，是防盗图的关键设计；status 支持软删除</td></tr>
+      <tr><td><code>invitations</code></td><td><b>work_id</b>、<b>company_id</b>、<b>jobseeker_id</b>、message、status</td><td>约谈记录；status 只有 4 个值：pending / accepted / rejected / cancelled</td></tr>
+    </table>
+    <div class="steps" style="margin-top:22px">
+      <div class="step"><div class="num">存储策略</div><h3>图片放哪</h3><p>图片/视频不存数据库（放库会拖垮性能），存<b>云存储/对象存储</b>，数据库里只存 URL 或 fileID。本地开发可先用临时目录，上线迁云存储。</p></div>
+      <div class="step"><div class="num">JSON 字段</div><h3>标签怎么存</h3><p>tags / media 这类变长数组用 JSON 字符串存一列即可，第一版不需要单独建关联表；筛选用 LIKE 匹配，够用再说索引优化。</p></div>
+      <div class="step"><div class="num">参数化查询</div><h3>防 SQL 注入</h3><p>所有查询一律用占位符 <code>?</code> 传参，禁止字符串拼 SQL —— 这是后端红线，一条都不能破。</p></div>
+      <div class="step"><div class="num">敏感字段</div><h3>接口永不返回</h3><p>password_hash、session_key 永远不出服务器；接口返回前统一做字段白名单（现后端已有 publicUser 处理）。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：约谈 ===== -->
+<section id="invite">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">05</div>
+      <h2>约谈怎么做：平台核心动作</h2>
+      <p>"反转"就反在这里：企业看中作品后<b>主动发起约谈</b>，求职者决定接不接受。逻辑全部在服务器判断。</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="num">发起</div><h3>企业 → 求职者</h3><p>企业提交 <code>work_id + 留言</code>。服务器校验：作品存在且已发布、发起人是企业、不能约谈自己、同一作品不重复约谈（409 拦截）。状态置 <code>pending</code>。</p></div>
+      <div class="step"><div class="num">回应</div><h3>求职者接受 / 拒绝</h3><p>只有<b>作品作者本人</b>能操作：<code>accept → accepted</code>（进入谈合作），<code>reject → rejected</code>。其他人操作一律 403。</p></div>
+      <div class="step"><div class="num">撤销</div><h3>企业取消</h3><p>发起方在 pending 阶段可 <code>cancel → cancelled</code>；一旦求职者已回应，任何一方都不能再改状态。</p></div>
+      <div class="step"><div class="num">通知</div><h3>对方怎么知道</h3><p>本地版：轮询 / 刷新列表。上线小程序：用<b>订阅消息模板</b>推送给对方，需要用户先授权订阅。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：上线 ===== -->
+<section id="deploy">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">06</div>
+      <h2>上线怎么做：本地 → 微信云开发</h2>
+      <p>开发阶段在你电脑上跑（已完成）；上线推荐迁到<b>微信云开发</b>：免服务器、免备案、个人开发者可上线，还和小程序原生打通。</p>
+    </div>
+    <table>
+      <colgroup><col style="width:22%"><col style="width:44%"><col style="width:34%"></colgroup>
+      <tr><th>步骤</th><th>做什么</th><th>注意</th></tr>
+      <tr><td>1. 注册</td><td>微信公众平台注册<b>小程序账号</b>，拿到 AppID；开通<b>云开发</b>环境</td><td>个人主体即可；AppSecret 妥善保存</td></tr>
+      <tr><td>2. 迁数据</td><td><code>users</code> 的登录键从 username 换成 <b>openid</b>；集合名不变</td><td>openid 由云函数 <code>getWXContext()</code> 直接拿，不再手写 JWT 也行</td></tr>
+      <tr><td>3. 迁存储</td><td>作品图上传<b>云存储</b>，库中存 fileID；展示时用临时链接</td><td>本地版临时目录直接替换，接口不变</td></tr>
+      <tr><td>4. 迁逻辑</td><td>路由改写成<b>云函数</b>（Node 运行时），每个接口一个函数</td><td>业务判断、状态机原样保留</td></tr>
+      <tr><td>5. 提审</td><td>微信开发者工具上传 → 提交审核 → 发布</td><td>约谈用订阅消息，需先在后台配模板</td></tr>
+    </table>
+    <div class="rule">云开发的账号体系天然更安全：身份来自微信（可信）、token 由平台管理（不用自己造轮子）。这也是我建议你上线用它、而不是自己买服务器的原因。</div>
+  </div>
+</section>
+
+<!-- ===== 视图：安全 ===== -->
+<section id="security">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">07</div>
+      <h2>安全必做清单（上线前逐条打勾）</h2>
+      <p>求职平台存着真实的人和真实的作品，安全不是可选项。</p>
+    </div>
+    <div class="card">
+      <ul class="check">
+        <li><b>密码只存 bcrypt 哈希</b>（cost ≥ 10），明文和哈希都永不下发前端</li>
+        <li><b>登录限流</b>：同一 IP / 账号 15 分钟错 5 次，锁 15 分钟</li>
+        <li><b>生产 JWT_SECRET</b> 换成 32 位以上随机值，放环境变量不进代码库</li>
+        <li><b>所有接口走 HTTPS</b>（微信小程序强制；自建服务器必须配证书）</li>
+        <li><b>参数化查询</b>防 SQL 注入；接口返回做字段白名单</li>
+        <li><b>角色校验在服务器</b>：前端按钮可以隐藏，但服务器必须再次验证身份与角色</li>
+        <li><b>作品防伪</b>：要求 process 过程图 / 源文件截图，后台抽查</li>
+        <li><b>隐私合规</b>：收集手机号/位置需在小程序隐私协议声明；不做与本平台无关的数据收集</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：路线图 ===== -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-no">08</div>
+      <h2>路线图：一个月跑起来</h2>
+      <p>先人工、后产品——别急着写代码做功能，先让两边有人。</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="time">第 1 周</div>
+        <div class="dot"></div>
+        <div class="body"><b>本地跑通全流程</b><br>后端已就绪：前端对接 9 个接口，完成注册登录、作品发布、约谈闭环的本地演示</div>
+      </div>
+      <div class="tl-item">
+        <div class="time">第 2 周</div>
+        <div class="dot"></div>
+        <div class="body"><b>人工冷启动（最关键）</b><br>用微信群 / 小红书收 30 份真实作品集，定向邀请 10 家本地小公司试用——先跑通 3 个真实约谈</div>
+      </div>
+      <div class="tl-item">
+        <div class="time">第 3 周</div>
+        <div class="dot"></div>
+        <div class="body"><b>迁到微信云开发</b><br>注册小程序、开通云开发，数据与逻辑迁移，接微信登录与订阅消息</div>
+      </div>
+      <div class="tl-item">
+        <div class="time">第 4 周</div>
+        <div class="dot"></div>
+        <div class="body"><b>提审上线 + 滚动运营</b><br>提交审核发布；每周补作品、补企业，按真实反馈加功能（筛选、消息、实名认证）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 视图：底部 ===== -->
+<footer>
+  <div class="wrap">
+    <h2>后端已经帮你跑通了，往前端进发</h2>
+    <p>接口文档在 <code style="color:var(--accent2)">reverse-job-backend/README.md</code>，服务地址 <code style="color:var(--accent2)">http://localhost:3000</code>。按本指南 03–05 章的接口对接前端即可。</p>
+    <a class="btn" href="#arch" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">回到顶部</a>
+  </div>
+</footer>
+
+</body>
+</html>
